@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Code') {
             steps {
-                git 'git@gitlab.local:mygroup/hello-world.git'
+                git 'https://github.com/Nachuselvam/devops.git'
             }
         }
 
