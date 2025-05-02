@@ -1,33 +1,16 @@
 pipeline {
     agent any
-    environment {
-        DEPLOY_SERVER = '192.168.1.20'         // IP of web server
-        DEPLOY_USER = 'deployer'               // SSH user on web server
-        DEPLOY_PATH = '/var/www/html/hello-world'
-    }
 
     stages {
-        stage('Clone Code') {
+        stage('Build') {
             steps {
-                git 'https://github.com/Nachuselvam/devops.git'
+                echo 'Building...'
             }
         }
-
         stage('Deploy') {
             steps {
-                sshagent(['jenkins-ssh']) {
-                    sh '''
-                    ssh $DEPLOY_USER@$DEPLOY_SERVER "mkdir -p $DEPLOY_PATH"
-                    scp index.html $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH/
-                    '''
-                }
+                echo 'Deploying Hello World!'
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Deployment successful: http://$DEPLOY_SERVER/hello-world/index.html"
         }
     }
 }
