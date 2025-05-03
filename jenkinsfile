@@ -5,12 +5,19 @@ pipeline {
         DEPLOY_SERVER = '192.168.1.20'
         DEPLOY_USER = 'deployer'
         DEPLOY_PATH = '/var/www/html/hello-world'
+        REPO_URL = 'https://github.com/Nachuselvam/devops.git'
     }
 
     stages {
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+            }
+        }
+
         stage('Clone Code') {
             steps {
-                git 'https://github.com/Nachuselvam/devops.git'
+                git "https://github.com/Nachuselvam/devops.git"
             }
         }
 
@@ -18,8 +25,13 @@ pipeline {
             steps {
                 sshagent(credentials: ['jenkins-ssh']) {
                     sh '''
-                    ssh $DEPLOY_USER@$DEPLOY_SERVER "mkdir -p $DEPLOY_PATH"
-                    scp index.html $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH/
+                    set -e  # Exit immediately if a command exits with a non-zero status
+
+                    echo "Creating remote directory if it doesn't exist..."
+                    ssh "$DEPLOY_USER@$DEPLOY_SERVER" "mkdir -p $DEPLOY_PATH"
+
+                    echo "Copying files to remote server..."
+                    scp index.html "$DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH/"
                     '''
                 }
             }
@@ -31,7 +43,7 @@ pipeline {
             echo "✅ Deployment successful: http://$DEPLOY_SERVER/hello-world/index.html"
         }
         failure {
-            echo "❌ Deployment failed."
+            echo "❌ Deployment failed. Check logs for details."
         }
     }
 }
