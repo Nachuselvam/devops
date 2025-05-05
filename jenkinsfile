@@ -23,7 +23,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sshagent(credentials: ['deployer-key']) {
+                sshagent(credentials: ['deploy-key']) {
                     sh '''
                     set -e  # Exit immediately if a command exits with a non-zero status
 
